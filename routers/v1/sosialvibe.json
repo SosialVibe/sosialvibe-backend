@@ -313,13 +313,18 @@
           "Blog Post"
         ],
         "summary": "Get All BlogPost",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryBlog"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Get All BlogPost Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BlogResponse"
+                  "$ref": "#/components/schemas/GetAllBlog"
                 }
               }
             }
@@ -604,13 +609,18 @@
           "Image Post"
         ],
         "summary": "Get All ImagePost",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryBlog"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Get All ImagePost Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BlogResponse"
+                  "$ref": "#/components/schemas/GetAllBlog"
                 }
               }
             }
@@ -895,13 +905,18 @@
           "Video Post"
         ],
         "summary": "Get All VideoPost",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryBlog"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Get All VideoPost Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BlogResponse"
+                  "$ref": "#/components/schemas/GetAllBlog"
                 }
               }
             }
@@ -1273,6 +1288,18 @@
         "schema": {
           "type": "string"
         }
+      },
+      "QueryBlog": {
+        "name": "type",
+        "in": "query",
+        "required": false,
+        "description": "This endpoint will return posts for all users, if you want to target a specific post of users who are currently logging in, add the parameter type = current",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "current"
+          ]
+        }
       }
     },
     "schemas": {
@@ -1321,6 +1348,34 @@
           },
           "data": {
             "$ref": "#/components/schemas/BlogData"
+          }
+        }
+      },
+      "GetAllBlog":{
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "integer"
+              },
+              "blogs": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/BlogData"
+                }
+              }
+            }
           }
         }
       },

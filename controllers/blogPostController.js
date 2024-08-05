@@ -4,13 +4,29 @@ import {unlink,access} from "fs";
 
 //get all BlogPost
 export const getAllBlogPost = async (req, res) => {
+  let blogPost;
   try {
-    const blogPost = await blogPostModel.find().sort({ createdAt: -1 }).populate("author","-password -__v");
+    if(req.query.type){
+      if(req.query.type!=="current") return res.status(400).json({
+        error:"VALIDATION_ERROR",
+        statusCode: 400,
+        message: "Invalid query parameter"
+      });
+      // get parameter
+      blogPost = await blogPostModel.find({ author: req.user.id })
+      .sort({ createdAt: -1 })
+      .populate("author","-password -__v");
+    }else{
+      blogPost = await blogPostModel.find().sort({ createdAt: -1 }).populate("author","-password -__v");
+    }
     res.status(200).json({
       error : null,
       statusCode: 200,
       message: "Blog Post Retrieved",
-      data:blogPost
+      data:{
+        count:blogPost.length,
+        blogs:blogPost
+      }
     });
   } catch (error) {
     res.status(500).json({

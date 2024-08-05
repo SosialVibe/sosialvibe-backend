@@ -4,11 +4,36 @@ import mongoose from 'mongoose';
 
 //get all ImagePost
 export const getAllImagePost = async (req, res) => {
+  let imagePost;
   try {
-    const imagePost = await imagePostModel.find().sort({ createdAt: -1 }).populate("author", "-password -__v");
-    res.status(200).json(imagePost);
+    if(req.query.type){
+      if(req.query.type!=="current") return res.status(400).json({
+        error:"VALIDATION_ERROR",
+        statusCode: 400,
+        message: "Invalid query parameter"
+      });
+      // get parameter
+      imagePost = await imagePostModel.find({ author: req.user.id })
+      .sort({ createdAt: -1 })
+      .populate("author", "-password -__v");
+    }else{
+        imagePost = await imagePostModel.find().sort({ createdAt: -1 }).populate("author", "-password -__v");
+    }
+    res.status(200).json({
+      error: null,
+      statusCode: 200,
+      message: "Blog Image Retrieved",
+      data:{
+        count:imagePost.length,
+        blogs:imagePost
+      }
+    });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    res.status(500).send({
+      error: "INTERNAL_SERVER_ERROR",
+      statusCode: 500,
+      message: "Internal Server Error"
+    });
   }
 };
 

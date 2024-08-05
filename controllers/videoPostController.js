@@ -5,13 +5,29 @@ import { unlink, access } from 'fs';
 
 //get all videoPost
 export const getAllVideoPost = async (req, res) => {
+  let videoPost;
   try {
-    const videoPost = await videoPostModel.find().sort({ createdAt: -1 }).populate("author", "-password -__v");
+    if(req.query.type){
+      if(req.query.type!=="current") return res.status(400).json({
+        error:"VALIDATION_ERROR",
+        statusCode: 400,
+        message: "Invalid query parameter"
+      });
+      // get parameter
+      videoPost = await videoPostModel.find({ author: req.user.id })
+      .sort({ createdAt: -1 })
+      .populate("author", "-password -__v");
+    }else{
+      videoPost = await videoPostModel.find().sort({ createdAt: -1 }).populate("author", "-password -__v");
+    }
     res.status(200).json({
       error : null,
       statusCode: 200,
-      message: "Video Post Retrieved",
-      data:videoPost
+      message: "Blog Video Retrieved",
+      data:{
+        count:videoPost.length,
+        blogs:videoPost
+      }
     });
   } catch (error) {
     res.status(500).json({
